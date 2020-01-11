@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Migraine Buddy Calendar Maker</title>
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans|Roboto&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --body-bg: #2f4460;
+            --body-color: #ffffff;
+            --highlight-bg: #30a1b0;
+            --highlight-color: #ffffff;
+            --header-bg: #3a434a;
+            --header-color: #ffffff;
+            --footer-bg: #343c50;
+            --footer-color: #ffffff;
+            --announcement-size: 52px;
+            --calendar-incident-border: 1px solid yellow;
+            --calendar-sev-1-bg: hsl(120deg, 100%, 25%);
+            --calendar-sev-1-color: #ffffff;
+            --calendar-sev-2-bg: hsl(96deg, 100%, 30%);
+            --calendar-sev-2-color: white;
+            --calendar-sev-3-bg: hsl(84deg, 100%, 50%);
+            --calendar-sev-3-color: black;
+            --calendar-sev-4-bg: hsl(72deg, 100%, 50%);
+            --calendar-sev-4-color: black;
+            --calendar-sev-5-bg: hsl(60deg, 100%, 50%);
+            --calendar-sev-5-color: black;
+            --calendar-sev-6-bg: hsl(48deg, 100%, 50%);
+            --calendar-sev-6-color: black;
+            --calendar-sev-7-bg: hsl(36deg, 100%, 50%);
+            --calendar-sev-7-color: black;
+            --calendar-sev-8-bg: hsl(24deg, 100%, 50%);
+            --calendar-sev-8-color: black;
+            --calendar-sev-9-bg: hsl(12deg, 100%, 50%);
+            --calendar-sev-9-color: white;
+            --calendar-sev-10-bg: hsl(0deg, 100%, 50%);
+            --calendar-sev-10-color: white;
+        }
+
+        body {
+            background-color: var(--body-bg);
+            color: var(--body-color);
+            font-family: 'Roboto', 'Open Sans', sans-serif;
+            margin: 0;
+            display: flex;
+            flex-flow: column nowrap;
+        }
+
+        a {
+            color: var(--body-color);
+            font-weight: bolder;
+        }
+
+        header {
+            background-color: var(--header-bg);
+            color: var(--header-color);
+            padding: 2vh 127.5px 0;
+            flex: 0 0 6vh;
+            position: relative;
+        }
+
+        header.has-announcement {
+            margin-top: var(--announcement-size);
+        }
+
+        header .logo {
+            display: flex;
+            flex-flow: column nowrap;
+        }
+
+        header .announcement {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            font-size: 19px;
+            font-weight: 400;
+            letter-spacing: 1.14px;
+            line-height: 22.8px;
+            display: flex;
+            background-color: var(--header-bg);
+            color: var(--header-color);
+            height: var(--announcement-size);
+            flex-flow: row nowrap;
+            justify-content: center;
+            align-items: center;
+        }
+
+        header .announcement button {
+            background-color: rgba(0, 0, 0, 0.15);
+            color: var(--header-color);
+            border-style: none;
+            font-size: large;
+            font-weight: bold;
+            position: absolute;
+            right: 0;
+            top: 0;
+            height: var(--announcement-size);
+            width: var(--announcement-size);
+        }
+
+        footer {
+            background-color: var(--footer-bg);
+            color: var(--footer-color);
+            padding: 2vh 2vw;
+            flex: 0 0 6vh;
+        }
+
+        main {
+            padding: 4vh 6vw;
+            flex: 1 1 88vh;
+        }
+
+        .intro {
+            background-color: var(--highlight-bg);
+            color: var(--highlight-color);
+            padding: 8vh 22vw;
+            font-size: x-large;
+            line-height: 2;
+        }
+
+        .hidden {
+            visibility: hidden;
+        }
+
+        table.month {
+            page-break-before: always;
+            page-break-inside: avoid;
+            table-layout: fixed;
+            border-collapse: collapse;
+            border: 1px solid;
+            width: 100%;
+        }
+
+        table.month td {
+            border: 1px solid;
+            height: calc(7in / 6);
+            width: calc(100% / 7);
+            text-align: right;
+            vertical-align: text-top;
+        }
+
+        table.month td.has-incident {
+            border: var(--calendar-incident-border);
+        }
+
+        table.month td.has-incident div {
+            text-align: left;
+        }
+
+        table.month td.has-incident div span {
+            display: block;
+        }
+
+        .severity-1 {
+            background-color: var(--calendar-sev-1-bg);
+            color: var(--calendar-sev-1-color);
+        }
+
+        .severity-2 {
+            background-color: var(--calendar-sev-2-bg);
+            color: var(--calendar-sev-2-color);
+        }
+
+        .severity-3 {
+            background-color: var(--calendar-sev-3-bg);
+            color: var(--calendar-sev-3-color);
+        }
+
+        .severity-4 {
+            background-color: var(--calendar-sev-4-bg);
+            color: var(--calendar-sev-4-color);
+        }
+
+        .severity-5 {
+            background-color: var(--calendar-sev-5-bg);
+            color: var(--calendar-sev-5-color);
+        }
+
+        .severity-6 {
+            background-color: var(--calendar-sev-6-bg);
+            color: var(--calendar-sev-6-color);
+        }
+
+        .severity-7 {
+            background-color: var(--calendar-sev-7-bg);
+            color: var(--calendar-sev-7-color);
+        }
+
+        .severity-8 {
+            background-color: var(--calendar-sev-8-bg);
+            color: var(--calendar-sev-8-color);
+        }
+
+        .severity-9 {
+            background-color: var(--calendar-sev-9-bg);
+            color: var(--calendar-sev-9-color);
+        }
+
+        .severity-10 {
+            background-color: var(--calendar-sev-10-bg);
+            color: var(--calendar-sev-10-color);
+        }
+
+        #print {
+            background-color: var(--highlight-bg);
+            border-width: 0;
+            cursor: pointer;
+            width: 52px;
+            height: 52px;
+        }
+
+        @media print {
+            :root {
+                --body-bg: #fff;
+                --body-color: #000;
+                --calendar-incident-border: 3px solid black;
+            }
+
+            header,
+            .intro,
+            .instructions,
+            form,
+            #print,
+            footer {
+                display: none;
+            }
+
+            main {
+                margin: 0;
+                padding: 0;
+            }
+        }
+    </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>
+</head>
+
+<body>
+    <header class="has-announcement">
+        <aside class="announcement">
+            <a href="#">Introducing MBPlus! Made to help you. Learn more and get your Early Access discount now.</a>
+            <button class="close" type="button">×</button>
+        </aside>
+        <h1 class="logo">
+            <img src="https://static1.squarespace.com/static/5b99cf16a9e02884bac66ae2/t/5d22fc940b931a00015a2143/1576826804096/?format=1500w"
+                style="max-width: 223px;" />
+            Calendar Maker
+        </h1>
+    </header>
+
+    <main>
+        <div class="intro">
+            Uses the exported data from <a href="https://migrainebuddy.com">Migraine Buddy</a> to create a printable
+            calendar view of the incidence of migraines, their severity, and the medication taken. This can be used
+            for your own tracking, or for sharing with your doctor.
+        </div>
+        <section class="instructions">
+            <h4>To get the export:</h4>
+            <ol>
+                <li>Open the Migraine Buddy app</li>
+                <li>Switch to the My Records tab</li>
+                <li>Tap the Export button</li>
+                <li>Choose the time period you'd like to see a calendar for</li>
+                <li>Tap Next</li>
+                <li>Customize what you'd like to see on the calendar</li>
+                <li>Export the data to the service of your choice
+                    <aside>I suggest exporting to email, then tapping the CSV Link to download the data.</aside>
+                </li>
+            </ol>
+        </section>
+        <form action="#">
+            <fieldset>
+                <legend>Select your CSV file here:</legend>
+                <p>Note: None of the data are uploaded to a server. All of the processing takes place in your browser.
+                </p>
+                <div class="form-group">
+                    <label for="csv-file">CSV File:</label>
+                    <input type="file" accept="text/csv" id="csv-file" />
+                </div>
+                <progress class="hidden">0</progress>
+            </fieldset>
+        </form>
+        <button id="print" class="hidden" onclick="window.print()">🖨</button>
+        <output id="calendar">
+        </output>
+    </main>
+    <footer></footer>
+    <script>
+        function dismissAnnouncement() {
+            const header = document.querySelector('header');
+            header.removeChild(document.querySelector('.announcement'));
+            header.classList.remove('has-announcement');
+            document.cookie = 'announcement=read;Expires=-1;';
+        }
+        document.body.addEventListener('click', (e) => {
+            if (e.target.matches('button.close')) {
+                dismissAnnouncement();
+            }
+        });
+        class CalendarMaker {
+            get isProcessing() { return this._isProcessing; }
+            set isProcessing(value) {
+                document.querySelector('progress').classList.toggle('hidden', !value);
+                document.querySelector('#print, output').classList.toggle('hidden', value);
+                this._isProcessing = value;
+            }
+            set csvFile(value) {
+                this.isProcessing = true;
+                if (typeof value.text !== 'function') {
+                    this.isProcessing = false;
+                    throw new Error("Invalid");
+                }
+                value.text().then(csv => {
+                    this.processCsv(csv);
+                });
+            }
+            constructor() {
+                this._isProcessing = false;
+                const me = this;
+                document.querySelector('#csv-file').addEventListener('change', function (e) {
+                    if (this.files && this.files[0]) {
+                        me.csvFile = this.files[0];
+                    }
+                }, false);
+            }
+            parseDate(dt) {
+                // assumes format of M/d/yy HH:mm
+                const dtRe = /(\d{1,2})\/(\d{1,2})\/(\d{2})\s(\d{2}):(\d{2})/;
+                const matches = dtRe.exec(dt);
+                if (matches.length < 6) {
+                    return new Date("Invalid Date");
+                }
+                return new Date((2000 + +matches[3]), (+matches[1] - 1), +matches[2], +matches[4], +matches[5]);
+            }
+            processCsv(csv) {
+                let lines = csv.split('"\n').filter(l => l.length !== 0).map(l => l + '"');
+                console.log(lines);
+                lines = lines.slice(1);
+                const data = lines.map(line => {
+                    const parts = line.split('","').map(f => f.replace(/"/g, ''));
+                    return {
+                        index: +parts[0],
+                        date: this.parseDate(parts[1]),
+                        duration: parts[2],
+                        pain10pt: +parts[3],
+                        pain3pt: Math.ceil(+parts[3] / 3),
+                        affectedActivites: parts[4],
+                        potentialTriggers: parts[5],
+                        symptoms: parts[6],
+                        worstSymptom: parts[7],
+                        auras: parts[8],
+                        painPositions: parts[9],
+                        helpfulMedications: parts[10],
+                        somewhatHelpfulMedications: parts[11],
+                        unhelpfulMedications: parts[12],
+                        unsureMedications: parts[13],
+                        helpfulTreatments: parts[14],
+                        somewhatHelpfulTreatments: parts[15],
+                        unhelpfulTreatments: parts[16],
+                        unsureTreatments: parts[17],
+                        notes: parts[18]
+                    };
+                });
+                console.log(data.sort((a, b) => a.date.valueOf() - b.date.valueOf()));
+                const earliestDate = data.reduce((agg, cur) => new Date(Math.min(agg.valueOf(), cur.date.valueOf())), new Date());
+                const latestDate = data.reduce((agg, cur) => new Date(Math.max(agg.valueOf(), cur.date.valueOf())), new Date(0));
+                const earliestMoment = moment(earliestDate).startOf('month');
+                const latestMoment = moment(latestDate).endOf('month');
+                const diffMonths = latestMoment.diff(earliestMoment, 'months');
+                const weekdayFragment = document.createDocumentFragment();
+                const weekdayThead = document.createElement('thead');
+                const weekdayRow = document.createElement('tr');
+                const sundayCell = document.createElement('th');
+                sundayCell.appendChild(document.createTextNode('Sun'));
+                weekdayRow.appendChild(sundayCell);
+                const mondayCell = document.createElement('th');
+                mondayCell.appendChild(document.createTextNode('Mon'));
+                weekdayRow.appendChild(mondayCell);
+                const tuesdayCell = document.createElement('th');
+                tuesdayCell.appendChild(document.createTextNode('Tue'));
+                weekdayRow.appendChild(tuesdayCell);
+                const wednesdayCell = document.createElement('th');
+                wednesdayCell.appendChild(document.createTextNode('Wed'));
+                weekdayRow.appendChild(wednesdayCell);
+                const thursdayCell = document.createElement('th');
+                thursdayCell.appendChild(document.createTextNode('Thu'));
+                weekdayRow.appendChild(thursdayCell);
+                const fridayCell = document.createElement('th');
+                fridayCell.appendChild(document.createTextNode('Fri'));
+                weekdayRow.appendChild(fridayCell);
+                const saturdayCell = document.createElement('th');
+                saturdayCell.appendChild(document.createTextNode('Sat'));
+                weekdayRow.appendChild(saturdayCell);
+                weekdayThead.appendChild(weekdayRow);
+                weekdayFragment.appendChild(weekdayThead);
+                const tempMoment = earliestMoment.clone();
+                for (let m = 0; m < diffMonths + 1; m++) {
+                    const month = tempMoment.month();
+                    const monthName = tempMoment.format('MMMM YYYY');
+                    const monthTable = document.createElement('table');
+                    monthTable.classList.add('month');
+                    const monthCaption = document.createElement('caption');
+                    monthCaption.appendChild(document.createTextNode(monthName));
+                    monthTable.appendChild(monthCaption);
+                    monthTable.appendChild(weekdayFragment.cloneNode(true));
+                    const monthTbody = document.createElement('tbody');
+                    tempMoment.startOf('month');
+                    const startWeek = tempMoment.isoWeek();
+                    tempMoment.endOf('month');
+                    const endWeek = tempMoment.isoWeek();
+                    console.log('endWeek', endWeek, 'startWeek', startWeek);
+                    const weekCount = endWeek < startWeek ? (endWeek + 52) - startWeek + 1 : endWeek - startWeek + 1;
+                    tempMoment.startOf('month').startOf('week');
+                    console.log('number of weeks', weekCount);
+                    console.log('start of month', tempMoment.format('YYYY-MM-DD'));
+                    for (let w = 0; w < weekCount; w++) {
+                        console.log('week loop', w, tempMoment.format('YYYY-MM-DD'));
+                        const weekTr = document.createElement('tr');
+                        for (let d = 0; d < 7; d++) {
+                            console.log('day loop', d, tempMoment.format('YYYY-MM-DD'));
+                            const dayCell = document.createElement('td');
+                            const dayNumber = document.createElement('span');
+                            dayNumber.classList.add('day-number');
+                            dayNumber.appendChild(document.createTextNode(tempMoment.format('D')));
+                            dayCell.appendChild(dayNumber);
+                            if (tempMoment.month() !== month) {
+                                dayCell.classList.add('other-month');
+                            }
+                            const incidents = data.filter(datum => moment(datum.date).isSame(tempMoment, 'day'));
+                            if (incidents.length) {
+                                const maxSeverity = Math.max.apply(null, incidents.map(i => i.pain10pt));
+                                dayCell.classList.add('has-incident');
+                                dayCell.classList.add(`severity-${maxSeverity}`);
+                                for (let incident of incidents) {
+                                    const incidentDiv = document.createElement('div');
+                                    const severitySpan = document.createElement('span');
+                                    severitySpan.classList.add('severity');
+                                    severitySpan.classList.add(`severity-${incident.pain10pt}`);
+                                    severitySpan.appendChild(document.createTextNode(incident.pain3pt));
+                                    incidentDiv.appendChild(severitySpan);
+                                    const medSpan = document.createElement('span');
+                                    medSpan.classList.add('meds');
+                                    medSpan.appendChild(document.createTextNode([incident.helpfulMedications, incident.somewhatHelpfulMedications, incident.unsureMedications, incident.unhelpfulMedications].filter(m => m && m.length > 0).join(', ')));
+                                    incidentDiv.appendChild(medSpan);
+                                    dayCell.appendChild(incidentDiv);
+                                }
+                            }
+                            weekTr.appendChild(dayCell);
+                            tempMoment.add(1, 'day');
+                        }
+                        monthTbody.appendChild(weekTr);
+                    }
+                    monthTable.appendChild(monthTbody);
+                    document.querySelector('#calendar').appendChild(monthTable);
+                    if (tempMoment.month() === month) {
+                        // for those weird months that end on the last day of the week
+                        tempMoment.add(1, 'months');
+                    }
+                }
+
+                this.isProcessing = false;
+            }
+        }
+        window.addEventListener('load', () => {
+            let maker = new CalendarMaker();
+            if (document.cookie.indexOf('announcement') !== -1) {
+                dismissAnnouncement();
+            }
+        });
+    </script>
+
+</body>
+
+</html>
